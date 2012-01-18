@@ -33,7 +33,7 @@ public class View extends JFrame{
 	private JSlider slider;
 	private Model lifeModel;
 	private boolean running;
-	View(Model model){
+	View(Model model, int gridSize){
 		lifeModel = model;
 		count = 0;
 		running = false;
@@ -43,7 +43,7 @@ public class View extends JFrame{
         
         JPanel gamePane = new JPanel();
         gamePane.setLayout(new BoxLayout(gamePane, BoxLayout.X_AXIS));
-        addGrid(model.gridRows(), model.gridCols(), gamePane);
+        addGrid(gridSize, gridSize, gamePane);
         addSlider(JSlider.VERTICAL, 1, 10, 1, 2, 1, gamePane, new ChangeValue());
         
         JPanel buttonPane = new JPanel();
@@ -216,8 +216,8 @@ public class View extends JFrame{
 			this.row = x;
 			this.col = y;
 			setBackground(Color.GRAY);
-			setOpaque(true);
-			setBorderPainted(false);
+			//setOpaque(true);
+			//setBorderPainted(false);
 			setPreferredSize(new Dimension(20, 20));
 			addMouseListener(new MouseQuitAdapter());
 		}

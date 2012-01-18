@@ -10,7 +10,7 @@ public class Life {
     			javax.swing.SwingUtilities.invokeLater(new Runnable() {
     	            public void run() {
     	            	Model model = new Model(size);
-    	                View gui = new View(model);
+    	                View gui = new View(model, size);
     	                gui.display();
     	            }
     	        });
@@ -22,7 +22,7 @@ public class Life {
     		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 	            public void run() {
 	            	Model model = new Model(30);
-	                View gui = new View(model);
+	                View gui = new View(model, 30);
 	                gui.display();
 	            }
 	        });
