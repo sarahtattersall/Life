@@ -2,6 +2,7 @@ package life;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -14,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
@@ -21,6 +23,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.OverlayLayout;
 
 
 public class View extends JFrame{
@@ -32,11 +35,10 @@ public class View extends JFrame{
 	private int timerDelay;
 	private JSlider slider;
 	private Model lifeModel;
-	private boolean running;
+	private JPanel glass;
 	View(Model model, int gridSize){
 		lifeModel = model;
 		count = 0;
-		running = false;
 		setTitle("Game of life");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(300,300);
@@ -44,12 +46,13 @@ public class View extends JFrame{
         JPanel gamePane = new JPanel();
         gamePane.setLayout(new BoxLayout(gamePane, BoxLayout.X_AXIS));
         addGrid(gridSize, gridSize, gamePane);
+        //gamePane.addMouseListener(new MouseRunningAdapter());
         addSlider(JSlider.VERTICAL, 1, 10, 1, 2, 1, gamePane, new ChangeValue());
         
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
 
-        // Add buttons:y
+        // Add buttons:
 		JButton clearButton = new JButton("Clear");
 		clearButton.addActionListener(new ClearListener());
 		buttonPane.add(clearButton);
@@ -65,11 +68,6 @@ public class View extends JFrame{
 		JButton quitButton = new JButton("Quit");
 		quitButton.addActionListener(new QuitListener());
 		buttonPane.add(quitButton);
-		
-        //addButton("Clear", buttonPane, new ClearListener());
-        //addButton("Step", buttonPane, new StepListener());
-        //addButton("Run", buttonPane, new RunListner());
-        //addButton("Quit", buttonPane, new QuitListener());
 		
         Container contentPane = getContentPane();
         contentPane.add(label, BorderLayout.NORTH);
@@ -119,6 +117,8 @@ public class View extends JFrame{
 	
 	private void addGrid(int rows, int cols, Container container) {
 		grid = new Cell[rows][cols];
+		JPanel panel =  new JPanel();
+		panel.setLayout(new OverlayLayout(panel));
 		JPanel gridPanel = new JPanel();
 		GridLayout gridLayout = new GridLayout(rows, cols);
 		gridPanel.setLayout(gridLayout);
@@ -129,7 +129,15 @@ public class View extends JFrame{
 				gridPanel.add(cell);
 			}
 		}
-		container.add(gridPanel);
+		
+		glass = new JPanel();
+		glass.setOpaque(false);
+		glass.setVisible(false);
+		glass.addMouseListener(new IgnoreMousePressAdapter());
+		panel.add(glass);
+		panel.add(gridPanel);
+		container.add(panel);
+
 	}
 	
 	private void incrementCounter(){
@@ -154,11 +162,11 @@ public class View extends JFrame{
 			if (button.getText().equals("Run")){
 				timer.start();
 				button.setText("Pause");
-				running = true;
+				glass.setVisible(true);
 			} else if ( button.getText().equals("Pause")){
 				timer.stop();
 				button.setText("Run");
-				running = false;
+				glass.setVisible(false);
 			}
 		}
 	}
@@ -166,7 +174,7 @@ public class View extends JFrame{
 	class ClearListener implements ActionListener{
 		public void actionPerformed(ActionEvent event){
 			timer.stop();
-			running = false;
+			glass.setVisible(false);
 			count = 0;
 			label.setText(Integer.toString(count));
 			runButton.setText("Run");
@@ -200,6 +208,11 @@ public class View extends JFrame{
         }
     }
 	
+	class IgnoreMousePressAdapter extends MouseAdapter{
+		public void mouseClicked(MouseEvent event) {
+        }
+	}
+	
 	class ChangeValue implements ChangeListener {
         public void stateChanged(final ChangeEvent expn) {
             final JSlider source = (JSlider)expn.getSource();
@@ -224,22 +237,20 @@ public class View extends JFrame{
 		
 		class MouseQuitAdapter extends MouseAdapter {
 	        public void mouseClicked(MouseEvent event) {
-	        	if (!running){
-		            if (SwingUtilities.isLeftMouseButton(event)) {
-		            	setBackground(Color.RED);
-		            	lifeModel.changeCellColor(row, col, LifeCell.Color.RED);
-		            	lifeModel.changeCellState(row, col, LifeCell.State.ALIVE);
-		            }else if (SwingUtilities.isRightMouseButton(event)){
-		            	setBackground(Color.GREEN);
-		            	lifeModel.changeCellColor(row, col, LifeCell.Color.GREEN);
-		            	lifeModel.changeCellState(row, col, LifeCell.State.ALIVE);
-		            }else if (SwingUtilities.isMiddleMouseButton(event)){
-		            	setBackground(Color.GRAY);
-		            	lifeModel.changeCellColor(row, col, LifeCell.Color.NONE);
-		            	lifeModel.changeCellState(row, col, LifeCell.State.DEAD);
-		            }
-	        	}
-	        }
+	            if (SwingUtilities.isLeftMouseButton(event)) {
+	            	setBackground(Color.RED);
+	            	lifeModel.changeCellColor(row, col, LifeCell.Color.RED);
+	            	lifeModel.changeCellState(row, col, LifeCell.State.ALIVE);
+	            }else if (SwingUtilities.isRightMouseButton(event)){
+	            	setBackground(Color.GREEN);
+	            	lifeModel.changeCellColor(row, col, LifeCell.Color.GREEN);
+	            	lifeModel.changeCellState(row, col, LifeCell.State.ALIVE);
+	            }else if (SwingUtilities.isMiddleMouseButton(event)){
+	            	setBackground(Color.GRAY);
+	            	lifeModel.changeCellColor(row, col, LifeCell.Color.NONE);
+	            	lifeModel.changeCellState(row, col, LifeCell.State.DEAD);
+	            }
+        	}
 	    }
 		
 		public void die(){
