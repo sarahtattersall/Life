@@ -2,24 +2,18 @@ package life;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -46,8 +40,10 @@ public class View extends JFrame{
         JPanel gamePane = new JPanel();
         gamePane.setLayout(new BoxLayout(gamePane, BoxLayout.X_AXIS));
         addGrid(gridSize, gridSize, gamePane);
-        //gamePane.addMouseListener(new MouseRunningAdapter());
         addSlider(JSlider.VERTICAL, 1, 10, 1, 2, 1, gamePane, new ChangeValue());
+        
+        timerDelay = 2000/slider.getValue();
+        timer = new Timer(timerDelay, new TimerListener());
         
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
@@ -62,7 +58,7 @@ public class View extends JFrame{
 		buttonPane.add(stepButton);
 		
 		runButton = new JButton("Run");
-		runButton.addActionListener(new RunListner());
+		runButton.addActionListener(new RunListener(timer, glass));
 		buttonPane.add(runButton);
 		
 		JButton quitButton = new JButton("Quit");
@@ -73,8 +69,6 @@ public class View extends JFrame{
         contentPane.add(label, BorderLayout.NORTH);
         contentPane.add(gamePane, BorderLayout.CENTER);
         contentPane.add(buttonPane, BorderLayout.PAGE_END);
-        timerDelay = 2000/slider.getValue();
-        timer = new Timer(timerDelay, new TimerListener());
         pack();
 	}
 	
@@ -82,7 +76,6 @@ public class View extends JFrame{
         setVisible(true);
 	}
 	
-//	TODO: else followed by assert instead of if. 
 	private void updateGrid(){
 		for( int row = 0; row < grid.length; ++row ){
 			for( int col = 0; col < grid[0].length; ++col ){
@@ -91,18 +84,13 @@ public class View extends JFrame{
 					grid[row][col].setBackground(Color.GREEN);
 				} else if ( cell.getColor() == LifeCell.Color.RED ){
 					grid[row][col].setBackground(Color.RED);
-				} else if ( cell.getState() == LifeCell.State.DEAD ){
+				} else{
+					assert(cell.getState() == LifeCell.State.DEAD);
 					grid[row][col].setBackground(Color.GRAY);
 				}
 			}
 		}
 	}
-	
-	//private void addButton(String text, Container container, ActionListener adapter){
-	//	JButton button = new JButton(text);
-	//	button.addActionListener(adapter);
-	//	container.add(button);
-	//}
 	
 	private void addSlider(int orientation, int min, int max, int value, int majorTicks,
 			int minorTicks, Container container, ChangeListener listener){
@@ -115,6 +103,9 @@ public class View extends JFrame{
 		container.add(slider);	
 	}
 	
+	// Creates a grid with a 'glass' panel in front of it that can be enabled when
+	// the game of life is running so that none of the Cells in the grid can be
+	// altered.
 	private void addGrid(int rows, int cols, Container container) {
 		grid = new Cell[rows][cols];
 		JPanel panel =  new JPanel();
@@ -129,7 +120,6 @@ public class View extends JFrame{
 				gridPanel.add(cell);
 			}
 		}
-		
 		glass = new JPanel();
 		glass.setOpaque(false);
 		glass.setVisible(false);
@@ -137,7 +127,6 @@ public class View extends JFrame{
 		panel.add(glass);
 		panel.add(gridPanel);
 		container.add(panel);
-
 	}
 	
 	private void incrementCounter(){
@@ -149,26 +138,6 @@ public class View extends JFrame{
 		lifeModel.takeTurn();
 		updateGrid();
 		incrementCounter();
-	}
-	
-	class QuitListener implements ActionListener{
-		public void actionPerformed(ActionEvent event) {
-			System.exit(0);
-		}
-	}
-	class RunListner implements ActionListener{
-		public void actionPerformed(ActionEvent event) {
-			JButton button = (JButton)event.getSource();
-			if (button.getText().equals("Run")){
-				timer.start();
-				button.setText("Pause");
-				glass.setVisible(true);
-			} else if ( button.getText().equals("Pause")){
-				timer.stop();
-				button.setText("Run");
-				glass.setVisible(false);
-			}
-		}
 	}
 	
 	class ClearListener implements ActionListener{
@@ -198,19 +167,6 @@ public class View extends JFrame{
 		public void actionPerformed(ActionEvent event){
 			takeTurn();
 		}
-	}
-	
-	class MouseQuitAdapter extends MouseAdapter {
-        public void mouseClicked(MouseEvent event) {
-            if (SwingUtilities.isLeftMouseButton(event)) {
-            	System.exit(0);
-            }
-        }
-    }
-	
-	class IgnoreMousePressAdapter extends MouseAdapter{
-		public void mouseClicked(MouseEvent event) {
-        }
 	}
 	
 	class ChangeValue implements ChangeListener {
