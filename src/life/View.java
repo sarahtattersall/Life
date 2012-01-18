@@ -124,7 +124,7 @@ public class View extends JFrame{
 		gridPanel.setLayout(gridLayout);
 		for( int row = 0; row < rows; ++row){
 			for ( int col = 0; col < cols; ++col){
-				Cell cell = new Cell(row,col);
+				Cell cell = new Cell(row,col,lifeModel);
 				grid[row][col] = cell;
 				gridPanel.add(cell);
 			}
@@ -222,40 +222,4 @@ public class View extends JFrame{
             }
         }
     }
-	class Cell extends JButton{
-		int row;
-		int col;
-		Cell(int x, int y){
-			this.row = x;
-			this.col = y;
-			setBackground(Color.GRAY);
-			//setOpaque(true);
-			//setBorderPainted(false);
-			setPreferredSize(new Dimension(20, 20));
-			addMouseListener(new MouseQuitAdapter());
-		}
-		
-		class MouseQuitAdapter extends MouseAdapter {
-	        public void mouseClicked(MouseEvent event) {
-	            if (SwingUtilities.isLeftMouseButton(event)) {
-	            	setBackground(Color.RED);
-	            	lifeModel.changeCellColor(row, col, LifeCell.Color.RED);
-	            	lifeModel.changeCellState(row, col, LifeCell.State.ALIVE);
-	            }else if (SwingUtilities.isRightMouseButton(event)){
-	            	setBackground(Color.GREEN);
-	            	lifeModel.changeCellColor(row, col, LifeCell.Color.GREEN);
-	            	lifeModel.changeCellState(row, col, LifeCell.State.ALIVE);
-	            }else if (SwingUtilities.isMiddleMouseButton(event)){
-	            	setBackground(Color.GRAY);
-	            	lifeModel.changeCellColor(row, col, LifeCell.Color.NONE);
-	            	lifeModel.changeCellState(row, col, LifeCell.State.DEAD);
-	            }
-        	}
-	    }
-		
-		public void die(){
-			setBackground(Color.GRAY);
-		}
-	}
-	
 }
