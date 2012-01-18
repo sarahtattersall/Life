@@ -46,5 +46,4 @@ public class LifeCell {
 		state = nextState;
 		color = nextColor;
 	}
-	
 }
