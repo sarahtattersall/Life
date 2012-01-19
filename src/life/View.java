@@ -58,7 +58,7 @@ public class View extends JFrame{
 		buttonPane.add(stepButton);
 		
 		runButton = new JButton("Run");
-		runButton.addActionListener(new RunListener(timer, glass));
+		runButton.addActionListener(new RunListener());
 		buttonPane.add(runButton);
 		
 		JButton quitButton = new JButton("Quit");
@@ -178,4 +178,25 @@ public class View extends JFrame{
             }
         }
     }
+	
+	class RunListener implements ActionListener{
+		public void actionPerformed(ActionEvent event) {
+			JButton button = (JButton)event.getSource();
+			if (button.getText().equals("Run")){
+				timer.start();
+				button.setText("Pause");
+				glass.setVisible(true);
+			} else if ( button.getText().equals("Pause")){
+				timer.stop();
+				button.setText("Run");
+				glass.setVisible(false);
+			}
+		}
+	}
+	
+	class QuitListener implements ActionListener{
+		public void actionPerformed(ActionEvent event) {
+			System.exit(0);
+		}
+	}
 }
