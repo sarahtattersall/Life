@@ -1,14 +1,6 @@
 package life;
 
-import java.util.Iterator;
-
 public class Model {
-//	TODO: This should be edgeless grid class!!!
-//	Have edgeless grid implement Iterable - make an iterator that remembers the 
-//	surrounding cells. It's more efficient than the for loops below!
-//	For the 6 it already has can remember count.
-//	Iterator gives you the flexability to add more efficiency in later.
-//	Holds the neighbours, might have count Fns in.
 	private EdgelessGrid grid;
 	
 	Model(int gridSize){
@@ -21,44 +13,10 @@ public class Model {
 	// Any live cell with more than three live neighbours dies
 	// Any dead cell with exactly three live neighbours becomes a live cell.
 	// If a new cell is born it inherits the majority color of it's surrounding cells.	
+	// Here it is simpler to have the cell contain it's next state and loop through 
+	// updating the next state and then commit all the states at the end rather than
+	// having a new grid. The grid iterator calculates the neighbour count and majority color.
 	public void takeTurn(){
-//		TODO: (1) look at state and update newState
-//			  (2) commit newStates to state.
-		/*int gridHeight = grid.grid.length;
-		int gridWidth = grid.grid[0].length;
-		LifeCell[][] newGrid = new LifeCell[gridHeight][gridWidth];
-		for( int row = 0; row < gridHeight; ++row ){
-			for( int col = 0; col < gridWidth; ++col ){
-				int liveNeighbours = liveNeighbourCount(row, col);
-				if (aliveCell(row, col)){
-					if (liveNeighbours < 2 || liveNeighbours > 3){
-						//newGrid[row][col] = new LifeCell();
-						grid.grid[row][col].setNextState(LifeCell.State.DEAD);
-						grid.grid[row][col].setNextColor(LifeCell.Color.NONE);
-					} else{
-						//newGrid[row][col] = grid.grid[row][col];
-						grid.grid[row][col].setNextState(grid.grid[row][col].getState());
-						grid.grid[row][col].setNextColor(grid.grid[row][col].getColor());
-					}
-				} else{
-					if( liveNeighbours == 3){
-						LifeCell.Color newColor = calculateMajorityColor(row, col);
-//						newGrid[row][col] = new LifeCell(newColor);
-						grid.grid[row][col].setNextState(LifeCell.State.ALIVE);
-						grid.grid[row][col].setNextColor(newColor);
-					} else {
-						//newGrid[row][col] = grid.grid[row][col];
-						grid.grid[row][col].setNextState(grid.grid[row][col].getState());
-						grid.grid[row][col].setNextColor(grid.grid[row][col].getColor());
-					}
-				}
-			}
-		} 
-		for( int row = 0; row < gridHeight; ++row ){
-			for( int col = 0; col < gridWidth; ++col ){
-				grid.grid[row][col].commitState();
-			}
-		}*/
 		for( EdgelessGrid.GridIterator itr = grid.iterator(); itr.hasNext();){
 			LifeCell cell = itr.next();
 			int liveNeighbours = itr.liveNeighbourCount();

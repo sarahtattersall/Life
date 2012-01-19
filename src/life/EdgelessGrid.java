@@ -33,6 +33,9 @@ public class EdgelessGrid implements Iterable<LifeCell>{
 		return new GridIterator(grid);
 	}
 	
+	// Having an iterator for the grid allows additional efficiency to be added in the
+	// future perhaps by sweeping through the board from right-left then left-right alternately
+	// whilst keeping track of the red, green and neighbour counts for the surrounding cells.
 	public class GridIterator implements Iterator<LifeCell>{
 		int x;
 		int y;

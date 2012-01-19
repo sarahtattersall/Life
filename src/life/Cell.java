@@ -22,6 +22,11 @@ class Cell extends JButton{
 			addMouseListener(new MouseQuitAdapter());
 		}
 		
+		
+		public void die(){
+			setBackground(Color.GRAY);
+		}
+		
 		class MouseQuitAdapter extends MouseAdapter {
 	        public void mouseClicked(MouseEvent event) {
 	            if (SwingUtilities.isLeftMouseButton(event)) {
@@ -39,8 +44,4 @@ class Cell extends JButton{
 	            }
         	}
 	    }
-		
-		public void die(){
-			setBackground(Color.GRAY);
-		}
 	}

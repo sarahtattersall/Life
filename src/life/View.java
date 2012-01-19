@@ -23,29 +23,33 @@ import javax.swing.OverlayLayout;
 
 
 public class View extends JFrame{
-	Cell[][] grid;
+	// Keeps track of the steps taken to be displayed on screen.
 	private int count;
+	// Label to display count
 	private JLabel label = new JLabel("0", SwingConstants.CENTER);
+	// A glass panel to sit over the grid to disable mouse events whilst
+	// the game of life is running
+	private JPanel glass;
+	
+	Cell[][] grid;
 	private JButton runButton;
 	private Timer timer;
-	private int timerDelay;
 	private JSlider slider;
 	private Model lifeModel;
-	private JPanel glass;
+
 	View(Model model, int gridSize){
 		lifeModel = model;
 		count = 0;
 		setTitle("Game of life");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300,300);
         
         JPanel gamePane = new JPanel();
         gamePane.setLayout(new BoxLayout(gamePane, BoxLayout.X_AXIS));
         addGrid(gridSize, gridSize, gamePane);
         addSlider(JSlider.VERTICAL, 1, 10, 1, 2, 1, gamePane, new ChangeValue());
         
-        timerDelay = 2000/slider.getValue();
-        timer = new Timer(timerDelay, new TimerListener());
+        int delay = 2000/slider.getValue();
+        timer = new Timer(delay, new TimerListener());
         
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
@@ -78,6 +82,7 @@ public class View extends JFrame{
         setVisible(true);
 	}
 	
+	// Updates the grid to be a replica of the lifeModel grid
 	private void updateGrid(){
 		for( int row = 0; row < grid.length; ++row ){
 			for( int col = 0; col < grid[0].length; ++col ){
@@ -171,16 +176,21 @@ public class View extends JFrame{
 		}
 	}
 	
+	// Changes the timers speed.
 	class ChangeValue implements ChangeListener {
         public void stateChanged(final ChangeEvent expn) {
             final JSlider source = (JSlider)expn.getSource();
             if (!source.getValueIsAdjusting()) {
-            	timerDelay = 2000/source.getValue();
-            	timer.setDelay(timerDelay);
+            	int delay = 2000/source.getValue();
+            	timer.setDelay(delay);
             }
         }
     }
 	
+	// When clicked changes run button text to pause, sets the
+	// timer and makes the glass pane over the grid panel visible
+	// so that you cannot click on any of the grid cells.
+	// Does the reverse when you click on pause.
 	class RunListener implements ActionListener{
 		public void actionPerformed(ActionEvent event) {
 			JButton button = (JButton)event.getSource();
