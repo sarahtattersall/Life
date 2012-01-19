@@ -33,6 +33,7 @@ public class View extends JFrame{
 	
 	Cell[][] grid;
 	private JButton runButton;
+	private JButton stepButton;
 	private Timer timer;
 	private JSlider slider;
 	private Model lifeModel;
@@ -59,7 +60,7 @@ public class View extends JFrame{
 		clearButton.addActionListener(new ClearListener());
 		buttonPane.add(clearButton);
 		
-		JButton stepButton = new JButton("Step");
+		stepButton = new JButton("Step");
 		stepButton.addActionListener(new StepListener());
 		buttonPane.add(stepButton);
 		
@@ -198,10 +199,12 @@ public class View extends JFrame{
 				timer.start();
 				button.setText("Pause");
 				glass.setVisible(true);
+				stepButton.setEnabled(false);
 			} else if ( button.getText().equals("Pause")){
 				timer.stop();
 				button.setText("Run");
 				glass.setVisible(false);
+				stepButton.setEnabled(true);
 			}
 		}
 	}
