@@ -16,6 +16,18 @@ public class EdgelessGrid implements Iterable<LifeCell>{
 			}
 		}
 	}
+
+	public void changeState(int x, int y, State state) {
+		grid[x][y].changeState(state);
+	}
+
+	public void changeColor(int x, int y, Color color) {
+		grid[x][y].changeColor(color);
+	}
+
+	public LifeCell get(int x, int y) {
+		return grid[x][y];
+	}
 	
 	public GridIterator iterator() {
 		return new GridIterator(grid);
@@ -26,8 +38,8 @@ public class EdgelessGrid implements Iterable<LifeCell>{
 		int y;
 		int prevx;
 		int prevy;
-		LifeCell[][] grid;
 		
+		LifeCell[][] grid;
 		GridIterator(LifeCell[][] grid){
 			this.grid = grid;
 		}
@@ -61,11 +73,11 @@ public class EdgelessGrid implements Iterable<LifeCell>{
 							++count;
 						}
 					}
-					
 				}
 			}
 			return count;	
 		}
+		
 		public LifeCell.Color calculateMajorityColor(){
 			int redCount = 0;
 			int greenCount = 0;
@@ -93,26 +105,16 @@ public class EdgelessGrid implements Iterable<LifeCell>{
 		private int neighbourCoord(int value, int offset, int length){
 			return mod(value + offset, length);
 		}
+		
 		private int mod( int value, int mod_value ){
 			value %= mod_value;
 			return value < 0 ? value + mod_value : value; 
 		}
+		
 		// Determines if a cell at grid location x y is alive.
 		public boolean aliveCell( int x, int y ){
 			return grid[x][y].getState() == LifeCell.State.ALIVE;
 		}
 		
-	}
-
-	public void changeState(int x, int y, State state) {
-		grid[x][y].changeState(state);
-	}
-
-	public void changeColor(int x, int y, Color color) {
-		grid[x][y].changeColor(color);
-	}
-
-	public LifeCell get(int x, int y) {
-		return grid[x][y];
 	}
 }
