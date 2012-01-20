@@ -3,6 +3,7 @@ package life;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
@@ -42,6 +44,7 @@ public class View extends JFrame{
 		lifeModel = model;
 		count = 0;
 		setTitle("Game of life");
+		setMaximumSize(new Dimension(10,10));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         JPanel gamePane = new JPanel();
@@ -119,6 +122,7 @@ public class View extends JFrame{
 		JPanel panel =  new JPanel();
 		panel.setLayout(new OverlayLayout(panel));
 		JPanel gridPanel = new JPanel();
+		gridPanel.setPreferredSize(new Dimension(800,800));
 		GridLayout gridLayout = new GridLayout(rows, cols);
 		gridPanel.setLayout(gridLayout);
 		for( int row = 0; row < rows; ++row){

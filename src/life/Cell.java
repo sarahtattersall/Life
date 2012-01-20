@@ -16,9 +16,6 @@ class Cell extends JButton{
 			this.col = y;
 			this.lifeModel = lifeModel;
 			setBackground(Color.GRAY);
-			//setOpaque(true);
-			//setBorderPainted(false);
-			setPreferredSize(new Dimension(20, 20));
 			addMouseListener(new MouseQuitAdapter());
 		}
 		
